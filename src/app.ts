@@ -4,6 +4,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser";
 import router from "./routes/index.js";
 import globalErrorHandler from "./errors/globalErrorHandler.js";
+import notFound from "./middleware/notFound.js";
 const app:Application=express()
 
 app.use(cors())
@@ -17,5 +18,7 @@ app.get("/", (req:Request, res:Response) => {
     message: "API Running"
   });
 });
+// 404 Middleware
+app.use(notFound);
 app.use(globalErrorHandler);
 export default app;

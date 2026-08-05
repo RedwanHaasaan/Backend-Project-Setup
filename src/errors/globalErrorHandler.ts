@@ -2,39 +2,50 @@ import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 
 import AppError from './AppError.js';
-import handleZodError from './handleZodError.js';
+import handleZodError from './handlers/handleZodError.js';
+import formatError from './formatError.js';
+import HttpStatus from '../constants/httpStatus.js';
+import handleAppError from './handlers/handleAppError.js';
+import handleUnknownError from './handlers/handleUnknownError.js';
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  let statusCode = 500;
+  let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
   let message = 'Internal Server Error';
   let errors: unknown[] = [];
   let hints: string | undefined;
 
-  if (error instanceof ZodError) {
-    const simplified = handleZodError(error);
+if (error instanceof ZodError) {
+  const simplified = handleZodError(error);
 
-    statusCode = simplified.statusCode;
-    message = simplified.message;
-    errors = simplified.errors;
-  } else if (error instanceof AppError) {
-    statusCode = error.statusCode;
-    message = error.message;
-    errors = Array.isArray(error.errors) ? error.errors : [];
-    hints = error.hints;
-  } else if (error instanceof Error) {
-    message = error.message;
-  }
+  statusCode = simplified.statusCode;
+  message = simplified.message;
+  errors = simplified.errors;
+}
 
-  res.status(statusCode).json({
-    success: false,
+else if (error instanceof AppError) {
+  const simplified = handleAppError(error);
+
+  statusCode = simplified.statusCode;
+  message = simplified.message;
+  errors = simplified.errors;
+  hints = simplified.hints;
+}
+
+else {
+  const simplified = handleUnknownError();
+  statusCode = simplified.statusCode;
+  message = simplified.message;
+}
+
+res.status(statusCode).json(
+  formatError({
     statusCode,
     message,
     errors,
     hints,
-    ...(process.env.NODE_ENV === 'development' && {
-      stack: error.stack,
-    }),
-  });
+    stack: error.stack,
+  })
+);
 };
 
 export default globalErrorHandler;

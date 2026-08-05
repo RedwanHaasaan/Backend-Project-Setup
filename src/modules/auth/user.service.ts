@@ -1,3 +1,4 @@
+import HttpStatus from "../../constants/httpStatus.js";
 import AppError from "../../errors/AppError.js";
 import { users } from "./user.constant.js";
 import { LoginUser, RegisterUser } from "./user.types.js";
@@ -6,7 +7,7 @@ const registerService = (payload: RegisterUser) => {
   const exists = users.find((user) => user.email === payload.email);
 
   if (exists) {
-    throw new AppError(401,"User already exists",[],"User Already Exist.Instead of register try to login with Credential");
+    throw new AppError(HttpStatus.CONFLICT,"User already exists",[],"User Already Exist.Instead of register try to login with Credential");
   }
 
   const newUser = {
@@ -27,7 +28,7 @@ const registerService = (payload: RegisterUser) => {
     );
 
     if (!user) {
-      throw new AppError(401,'Invalid Credentials',[],"Check your email and password carefully and enter valid credential");
+      throw new AppError(HttpStatus.UNAUTHORIZED,'Invalid Credentials',[],"Check your email and password carefully and enter valid credential");
     }
 
     return {
