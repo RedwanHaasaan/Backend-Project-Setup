@@ -1,7 +1,7 @@
 import HttpStatus from "../../constants/httpStatus.js";
 import AppError from "../../errors/AppError.js";
-import { users } from "./user.constant.js";
-import { LoginUser, RegisterUser } from "./user.types.js";
+import { users } from "./auth.constant.js";
+import { LoginUser, RegisterUser } from "./auth.types.js";
 
 const registerService = (payload: RegisterUser) => {
   const exists = users.find((user) => user.email === payload.email);
