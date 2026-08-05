@@ -1,8 +1,15 @@
-import app from "./app.js";
-import { env } from "./config/env.js";
+import http, { type Server } from 'http';
+import app from './app.js';
+import { env } from './config/env.js';
 
-const PORT=env.port;
+const PORT = env.port;
+let server: Server;
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+const bootStrap = async () => {
+  const httpServer = http.createServer(app);
+
+  server = httpServer.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
+};
+bootStrap();
