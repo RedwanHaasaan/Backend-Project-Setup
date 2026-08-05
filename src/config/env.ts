@@ -1,8 +1,14 @@
 import dotenv from "dotenv";
+import path from "path";
+import { envValidate } from "./env.validate.js";
 
-dotenv.config();
+dotenv.config({
+  path: path.join(process.cwd(),'.env')
+});
+
+const envVariables =envValidate()
 
 export const env = {
-  PORT: process.env.PORT || "5000",
-  NODE_ENV: process.env.NODE_ENV || "development"
+  port:envVariables.PORT,
+  nodeEnv:envVariables.NODE_ENV,
 };

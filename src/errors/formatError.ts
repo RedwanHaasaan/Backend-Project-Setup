@@ -9,7 +9,7 @@ const formatError = ({
   stack,
 }: IFormattedError) => {
     
-  const isDevelopment = env.NODE_ENV === 'development';
+  const isDevelopment = env.nodeEnv === 'development';
 
   if (isDevelopment) {
     return { success: false, statusCode, message, errors, hints, stack };
