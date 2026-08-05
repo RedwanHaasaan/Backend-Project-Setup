@@ -1,41 +1,30 @@
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
+import catchAsync from "../../utils/catchAsync.js";
 import userService from "./user.service.js";
 
-const registerController = (req: Request, res: Response) => {
-  try {
-    const result = userService.registerService(req.body);
+export const registerController: RequestHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.registerService(req.body);
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: (error as Error).message,
-    });
-  }
-};
+  res.status(201).json({
+    success: true,
+    message: "Registration Successful",
+    data: result,
+  });
+});
 
-const loginController = (req: Request, res: Response) => {
-  try {
-    const result = userService.loginService(req.body);
-
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: result,
-    });
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: (error as Error).message,
-    });
-  }
-};
+export const loginController: RequestHandler = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.loginService(req.body);
+  res.status(200).json({
+    success: true,
+    message: "Login successful",
+    data: result,
+  });
+});
 
 export default {
   registerController,
   loginController,
+} as {
+  registerController: RequestHandler;
+  loginController: RequestHandler;
 };
