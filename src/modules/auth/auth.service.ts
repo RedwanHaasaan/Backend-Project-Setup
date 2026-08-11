@@ -1,4 +1,3 @@
-import { uuidv4 } from "zod";
 import HttpStatus from "../../constants/httpStatus.js";
 import AppError from "../../errors/AppError.js";
 import { prisma } from "../../lib/prisma.js";
@@ -15,12 +14,7 @@ const registerService = async (payload: RegisterUser) => {
     throw new AppError(HttpStatus.CONFLICT,"User already exists",[],"User Already Exist.Instead of register try to login with Credential");
   }
   const createdUser = await prisma.user.create({
-    data: {
-      id: uuidv4().toString(),
-      fullname: payload.fullname,
-      email: payload.email,
-      password: payload.password,
-    },
+    data: payload,
     select: {
       id: true,
       email: true,
@@ -52,7 +46,7 @@ const registerService = async (payload: RegisterUser) => {
     if (!isPasswordValid) {
       throw new AppError(HttpStatus.UNAUTHORIZED,'Invalid Credentials',[],"Check your email and password carefully and enter valid credential");
     }
-    return user;
+    return user ;
   };
 
 export default {
