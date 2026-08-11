@@ -8,7 +8,8 @@ import HttpStatus from '../constants/httpStatus.js';
 import handleAppError from './handlers/handleAppError.js';
 import handleUnknownError from './handlers/handleUnknownError.js';
 
-const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
   let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
   let message = 'Internal Server Error';
   let errors: unknown[] = [];
@@ -20,6 +21,7 @@ if (error instanceof ZodError) {
   statusCode = simplified.statusCode;
   message = simplified.message;
   errors = simplified.errors;
+  hints = simplified.hints;
 }
 
 else if (error instanceof AppError) {
@@ -30,7 +32,6 @@ else if (error instanceof AppError) {
   errors = simplified.errors;
   hints = simplified.hints;
 }
-
 else {
   const simplified = handleUnknownError();
   statusCode = simplified.statusCode;

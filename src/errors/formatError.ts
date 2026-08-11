@@ -15,7 +15,7 @@ const formatError = ({
     return { success: false, statusCode, message, errors, hints, stack };
   }
 
-  return { success: false, statusCode, message, errors, hints };
+  return { success: false, statusCode, message, errors };
 };
 
 export default formatError;

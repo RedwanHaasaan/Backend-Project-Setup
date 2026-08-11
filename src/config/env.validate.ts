@@ -1,8 +1,9 @@
-import zod, { safeParse } from 'zod';
+import zod from 'zod';
 
 const envSchema = zod.object({
   PORT: zod.string(),
   NODE_ENV: zod.string(),
+  DATABASE_URL:zod.string()
 });
 
 export const envValidate = () => {

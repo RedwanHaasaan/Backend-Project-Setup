@@ -1,12 +1,11 @@
 import { Request, Response, RequestHandler } from "express";
 import catchAsync from "../../utils/catchAsync.js";
-import userService from "./user.service.js";
 import sendResponse from "../../utils/sendResponse.js";
 import HttpStatus from "../../constants/httpStatus.js";
-
+import authService from "./auth.service.js";
 export const registerController: RequestHandler = catchAsync(async (req: Request, res: Response) => {
 
-  const result = await userService.registerService(req.body);
+  const result = await authService.registerService(req.body);
 
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,
@@ -18,7 +17,7 @@ export const registerController: RequestHandler = catchAsync(async (req: Request
 
 export const loginController: RequestHandler = catchAsync(async (req: Request, res: Response) => {
 
-  const result = await userService.loginService(req.body);
+  const result = await authService.loginService(req.body);
 
   sendResponse(res, {
     statusCode: HttpStatus.SUCCESS,
