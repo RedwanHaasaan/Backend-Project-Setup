@@ -7,13 +7,13 @@ class AppError extends Error {
     statusCode: number,
     message: string,
     errors?: unknown,
-    hints?: string
+    hint?: string
   ) {
     super(message);
 
     this.statusCode = statusCode;
     this.errors = errors;
-    this.hints = hints;
+    this.hints = hint;
 
     Error.captureStackTrace(this, this.constructor);
   }

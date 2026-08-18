@@ -3,10 +3,11 @@ import catchAsync from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
 import HttpStatus from "../../constants/httpStatus.js";
 import authService from "./auth.service.js";
+
+
 export const registerController: RequestHandler = catchAsync(async (req: Request, res: Response) => {
 
   const result = await authService.registerService(req.body);
-
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,
     success: true,
