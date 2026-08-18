@@ -1,4 +1,4 @@
 declare module '*.js' {
-  const value: any;
+  const value: unknown;
   export default value;
 }
