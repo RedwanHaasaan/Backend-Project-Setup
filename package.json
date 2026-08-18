@@ -7,6 +7,9 @@
     "dev": "tsx watch src/server.ts",
     "build": "pnpm prisma generate && tsc",
     "start": "node dist/server.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
@@ -49,6 +52,7 @@
     "prisma": "^7.9.1",
     "tsx": "^4.23.5",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   }
 }
