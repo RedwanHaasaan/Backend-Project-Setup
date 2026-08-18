@@ -2,6 +2,7 @@ import http, { type Server } from "http";
 import app from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
+import { verifyMailTransporter } from "./lib/mailTransporter.js";
 
 const PORT = env.port;
 
@@ -44,17 +45,18 @@ const bootstrap = async () => {
 
   // Unhandled Promise Rejection
   process.on("unhandledRejection", (error) => {
-    shutdown(1,"Unhandled Promise Rejection detected. Shutting down...",error);
+    shutdown(1, "Unhandled Promise Rejection detected. Shutting down...", error);
   });
 
   // Uncaught Exception
   process.on("uncaughtException", (error) => {
-    shutdown(1,"Uncaught Exception detected. Shutting down...",error);
+    shutdown(1, "Uncaught Exception detected. Shutting down...", error);
   });
 
   try {
     await prisma.$queryRaw`SELECT 1`;
     console.log("Database connected successfully");
+    await verifyMailTransporter();
 
     const httpServer = http.createServer(app);
 

@@ -3,7 +3,12 @@ import zod from 'zod';
 const envSchema = zod.object({
   PORT: zod.string(),
   NODE_ENV: zod.string(),
-  DATABASE_URL:zod.string()
+  DATABASE_URL: zod.string(),
+  SMTP_HOST: zod.string(),
+  SMTP_PORT: zod.string(),
+  SMTP_USER: zod.string(),
+  SMTP_PASS: zod.string(),
+  SMTP_FROM: zod.string(),
 });
 
 export const envValidate = () => {
