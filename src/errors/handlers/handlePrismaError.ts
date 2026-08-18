@@ -3,10 +3,8 @@ import { Prisma } from "../../generated/prisma/client.js";
 const handlePrismaError = (error: unknown) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {
-      // ==========================================
-      // DATA / FIELD ERRORS
-      // ==========================================
 
+      // DATA / FIELD ERRORS
       case "P2000":
         return {
           statusCode: 400,
@@ -19,6 +17,7 @@ const handlePrismaError = (error: unknown) => {
             },
           ],
         };
+
 
       case "P2005":
         return {
@@ -96,10 +95,8 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
-      // RECORD NOT FOUND
-      // ==========================================
 
+      // RECORD NOT FOUND
       case "P2001":
       case "P2015":
       case "P2018":
@@ -116,36 +113,12 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
+
       // UNIQUE CONSTRAINT
-      // ==========================================
-
       case "P2002": {
-        let target = "";
-
-        if (Array.isArray(error.meta?.target)) {
-          target = error.meta.target.join(", ");
-        } else if (typeof error.meta?.target === "string") {
-          target = error.meta.target;
-        }
-
-        if (!target) {
-          // Extract field name from Prisma error message (e.g. `Unique constraint failed on the fields: (`email`)`)
-          const match =
-            error.message.match(/fields:\s*\(`?([^`\s\)]+)`?\)/i) ||
-            error.message.match(/fields:\s*\(([^)]+)\)/i);
-          if (match && match[1]) {
-            target = match[1].replace(/`/g, "").trim();
-          }
-        }
-
-        if (!target && error.meta?.modelName && typeof error.meta.modelName === "string") {
-          target = error.meta.modelName.toLowerCase();
-        }
-
-        if (!target) {
-          target = "field";
-        }
+        const target = Array.isArray(error.meta?.target)
+          ? error.meta.target.join(", ")
+          : String(error.meta?.target ?? "field");
 
         return {
           statusCode: 409,
@@ -160,117 +133,82 @@ const handlePrismaError = (error: unknown) => {
         };
       }
 
-      // ==========================================
+
       // FOREIGN KEY CONSTRAINT
-      // ==========================================
-
-      case "P2003": {
-        const field =
-          (typeof error.meta?.field_name === "string" && error.meta.field_name) ||
-          (typeof error.meta?.column_name === "string" && error.meta.column_name) ||
-          (error.message.match(/foreign key constraint failed on the field:\s*`?([^`\s\)]+)`?/i)?.[1]) ||
-          "";
-
+      case "P2003":
         return {
           statusCode: 409,
           message: "Conflict",
           hints: "Make sure the referenced record exists before performing this operation.",
           errors: [
             {
-              path: field.replace(/`/g, "").trim(),
-              message: "The operation violates a foreign key constraint.",
+              path: String(error.meta?.field_name ?? ""),
+              message:
+                "The operation violates a foreign key constraint.",
             },
           ],
         };
-      }
 
-      // ==========================================
+
       // RELATION CONSTRAINT
-      // ==========================================
-
-      case "P2014": {
-        const relation =
-          (typeof error.meta?.relation_name === "string" && error.meta.relation_name) ||
-          "";
-
+      case "P2014":
         return {
           statusCode: 409,
           message: "Relationship Conflict",
           hints: "Make sure the required related record exists before modifying this relationship.",
           errors: [
             {
-              path: relation,
-              message: "This operation violates a required relationship.",
+              path: String(error.meta?.relation_name ?? ""),
+              message:
+                "This operation violates a required relationship.",
             },
           ],
         };
-      }
 
-      case "P2017": {
-        const relation =
-          (typeof error.meta?.relation_name === "string" && error.meta.relation_name) ||
-          "";
-
+      case "P2017":
         return {
           statusCode: 409,
           message: "Relationship Conflict",
           hints: "Verify the related record IDs and make sure the required relationship exists.",
           errors: [
             {
-              path: relation,
+              path: String(error.meta?.relation_name ?? ""),
               message: "The requested records are not connected.",
             },
           ],
         };
-      }
 
-      // ==========================================
+
       // NULL / REQUIRED VALUE
-      // ==========================================
-
-      case "P2011": {
-        const field =
-          (typeof error.meta?.constraint === "string" && error.meta.constraint) ||
-          (typeof error.meta?.column_name === "string" && error.meta.column_name) ||
-          "";
-
+      case "P2011":
         return {
           statusCode: 400,
           message: "Invalid Data",
           hints: "Provide a valid value for the required field.",
           errors: [
             {
-              path: field,
+              path: String(error.meta?.constraint ?? ""),
               message: "This field cannot be null.",
             },
           ],
         };
-      }
 
       case "P2012":
-      case "P2013": {
-        const field =
-          (typeof error.meta?.field_name === "string" && error.meta.field_name) ||
-          (typeof error.meta?.column_name === "string" && error.meta.column_name) ||
-          "";
-
+      case "P2013":
         return {
           statusCode: 400,
           message: "Invalid Data",
           hints: "Make sure all required fields and arguments are provided.",
           errors: [
             {
-              path: field,
+              path: String(error.meta?.field_name ?? ""),
               message: "A required value is missing.",
             },
           ],
         };
-      }
 
-      // ==========================================
+
       // QUERY ERRORS
-      // ==========================================
-
       case "P2008":
       case "P2009":
       case "P2016":
@@ -287,10 +225,8 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
-      // DATABASE UNAVAILABLE
-      // ==========================================
 
+      // DATABASE UNAVAILABLE
       case "P2024":
         return {
           statusCode: 503,
@@ -305,10 +241,8 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
-      // TRANSACTION CONFLICT
-      // ==========================================
 
+      // TRANSACTION CONFLICT
       case "P2034":
         return {
           statusCode: 409,
@@ -323,10 +257,8 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
-      // SERVER-SIDE DATABASE ERRORS
-      // ==========================================
 
+      // SERVER-SIDE DATABASE ERRORS
       case "P2010":
       case "P2021":
       case "P2022":
@@ -347,10 +279,8 @@ const handlePrismaError = (error: unknown) => {
           ],
         };
 
-      // ==========================================
-      // UNKNOWN PRISMA ERROR
-      // ==========================================
 
+      // UNKNOWN PRISMA ERROR
       default:
         return {
           statusCode: 500,
@@ -366,10 +296,8 @@ const handlePrismaError = (error: unknown) => {
     }
   }
 
-  // ==========================================
-  // PRISMA VALIDATION ERROR
-  // ==========================================
 
+  // PRISMA VALIDATION ERROR
   if (error instanceof Prisma.PrismaClientValidationError) {
     return {
       statusCode: 400,
@@ -384,10 +312,8 @@ const handlePrismaError = (error: unknown) => {
     };
   }
 
-  // ==========================================
-  // DATABASE INITIALIZATION
-  // ==========================================
 
+  // DATABASE INITIALIZATION
   if (error instanceof Prisma.PrismaClientInitializationError) {
     return {
       statusCode: 503,
@@ -403,10 +329,8 @@ const handlePrismaError = (error: unknown) => {
     };
   }
 
-  // ==========================================
-  // UNKNOWN PRISMA REQUEST ERROR
-  // ==========================================
 
+  // UNKNOWN PRISMA REQUEST ERROR
   if (error instanceof Prisma.PrismaClientUnknownRequestError) {
     return {
       statusCode: 500,
@@ -421,10 +345,8 @@ const handlePrismaError = (error: unknown) => {
     };
   }
 
-  // ==========================================
-  // PRISMA ENGINE PANIC
-  // ==========================================
 
+  // PRISMA ENGINE PANIC
   if (error instanceof Prisma.PrismaClientRustPanicError) {
     return {
       statusCode: 500,
@@ -439,14 +361,12 @@ const handlePrismaError = (error: unknown) => {
     };
   }
 
-  // ==========================================
-  // FALLBACK
-  // ==========================================
 
+  // FALLBACK
   return {
     statusCode: 500,
     message: "Internal Server Error",
-    hints: "Please try again later. If the problem persists, contact the system administrator.",
+    hint: "Please try again later. If the problem persists, contact the system administrator.",
     errors: [
       {
         path: "",
