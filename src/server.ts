@@ -4,7 +4,7 @@ import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
 import { verifyMailTransporter } from "./lib/mailTransporter.js";
 
-const PORT = env.port;
+const PORT = Number(env.port);
 
 const bootstrap = async () => {
   let server: Server;
@@ -60,7 +60,7 @@ const bootstrap = async () => {
 
     const httpServer = http.createServer(app);
 
-    server = httpServer.listen(PORT, () => {
+    server = httpServer.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on ${PORT} PORT`);
     });
   } catch (error) {
