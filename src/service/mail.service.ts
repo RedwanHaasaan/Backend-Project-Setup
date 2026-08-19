@@ -1,5 +1,7 @@
-import transporter from "../lib/mailTransporter.js";
+import { env } from "../config/env.js";
+import { resend } from "../lib/resend.js";
 import { renderWelcomeEmail } from "./mail.template.js";
+import EmailError from "../errors/EmailError.js";
 
 interface SendWelcomeEmailOptions {
     to: string;
@@ -26,8 +28,8 @@ const sendWelcomeEmail = async ({
         year: new Date().getFullYear(),
     });
 
-    return transporter.sendMail({
-        from: process.env.SMTP_FROM,
+    const { data, error } = await resend.emails.send({
+        from: env.smtpFrom,
         to,
         subject: `Welcome to ${appName}!`,
         html,
@@ -47,6 +49,12 @@ const sendWelcomeEmail = async ({
             The ${appName} Team
         `.trim(),
     });
+
+    if (error) {
+        throw new EmailError(error.message, error.name);
+    }
+
+    return data;
 };
 
 export default sendWelcomeEmail;

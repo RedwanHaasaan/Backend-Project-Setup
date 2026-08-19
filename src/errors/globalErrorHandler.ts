@@ -8,6 +8,8 @@ import handleAppError from './handlers/handleAppError.js';
 import handleUnknownError from './handlers/handleUnknownError.js';
 import { Prisma } from '../generated/prisma/client.js';
 import handlePrismaError from './handlers/handlePrismaError.js';
+import EmailError from './EmailError.js';
+import handleEmailError from './handlers/handleEmailError.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
@@ -43,6 +45,14 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
 
   else if (error instanceof AppError) {
     const simplified = handleAppError(error);
+
+    statusCode = simplified.statusCode;
+    message = simplified.message;
+    errors = simplified.errors;
+    hints = simplified.hints;
+  }
+  else if (error instanceof EmailError) {
+    const simplified = handleEmailError(error);
 
     statusCode = simplified.statusCode;
     message = simplified.message;
