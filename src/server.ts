@@ -53,7 +53,6 @@ const bootstrap = async () => {
   });
 
   try {
-    const dbStart = performance.now();
     await prisma.$connect();
     console.log("Database connected successfully");
 
