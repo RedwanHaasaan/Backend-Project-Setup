@@ -1,7 +1,7 @@
 import zod from 'zod';
 
 const envSchema = zod.object({
-  PORT: zod.string(),
+  PORT: zod.coerce.number(),
   NODE_ENV: zod.string(),
   DATABASE_URL: zod.string(),
   SMTP_HOST: zod.string(),

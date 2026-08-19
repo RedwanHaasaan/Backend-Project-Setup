@@ -1,47 +1,30 @@
-# Base
-FROM node:24-alpine AS base
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-RUN corepack enable
+FROM node:24-alpine3.23
 
 WORKDIR /app
 
-# Dependencies
-FROM base AS deps
+#install bash
+RUN apk add --no-cache bash
 
+# Enable pnpm through Corepack
+RUN corepack enable && corepack prepare pnpm@11.22.0 --activate
+
+# Copy dependency files first for better Docker caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
+# Install dependencies
 RUN pnpm install --frozen-lockfile
 
-
-# Build
-FROM base AS build
-
-COPY --from=deps /app/node_modules ./node_modules
-
+# Copy application source
 COPY . .
 
-RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm prisma generate
+#build the application
+RUN pnpm run build
 
-RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm build
+#copy dist folder
 RUN cp -r src/templates dist/templates
 
-# Production
-FROM node:24-alpine AS production
+# Development server port
+EXPOSE 5050
 
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-RUN corepack enable
-
-COPY --from=build /app/package.json ./
-COPY --from=build /app/pnpm-lock.yaml ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/src/generated ./src/generated
-EXPOSE 5000
-
-CMD ["node", "dist/server.js"]
+# Start development server
+CMD ["pnpm", "start"]

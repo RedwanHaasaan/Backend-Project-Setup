@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: backend-setup
+
+    ports:
+      - "5050:5050"
+
+    env_file:
+      - .env
+
+    restart: unless-stopped

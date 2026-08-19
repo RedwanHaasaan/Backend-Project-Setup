@@ -18,6 +18,7 @@ app.get("/", (req: Request, res: Response) => {
     message: "API Running"
   });
 });
+
 // 404 Middleware
 app.use(notFound);
 app.use(globalErrorHandler);

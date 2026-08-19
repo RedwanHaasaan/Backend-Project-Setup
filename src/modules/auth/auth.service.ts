@@ -1,10 +1,18 @@
 import HttpStatus from "../../constants/httpStatus.js";
 import AppError from "../../errors/AppError.js";
 import { prisma } from "../../lib/prisma.js";
-import sendEmail from "../../service/mail.service.js";
+// import sendEmail from "../../service/mail.service.js";
 import { LoginUser, RegisterUser } from "../../types/auth/auth.types.js";
-
 const registerService = async (payload: RegisterUser) => {
+
+  if (!payload.fullname || !payload.email || !payload.password) {
+    throw new AppError(
+      HttpStatus.BAD_REQUEST,
+      "Missing required fields",
+      [],
+      "Please provide fullname, email and password"
+    );
+  }
   const createdUser = await prisma.user.create({
     data: payload,
     select: {
@@ -12,11 +20,6 @@ const registerService = async (payload: RegisterUser) => {
       email: true,
       fullname: true,
     },
-  });
-  await sendEmail({
-    to: createdUser.email,
-    name: createdUser.fullname,
-    createdAt: new Date(),
   });
   return createdUser;
 };
