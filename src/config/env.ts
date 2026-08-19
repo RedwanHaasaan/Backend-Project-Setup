@@ -12,9 +12,6 @@ export const env = {
   port: envVariables.PORT,
   nodeEnv: envVariables.NODE_ENV,
   dbUrl: envVariables.DATABASE_URL,
-  smtpHost: envVariables.SMTP_HOST,
-  smtpPort: envVariables.SMTP_PORT,
-  smtpUser: envVariables.SMTP_USER,
-  smtpPass: envVariables.SMTP_PASS,
+  resendApiKey: envVariables.RESEND_API_KEY,
   smtpFrom: envVariables.SMTP_FROM,
 };

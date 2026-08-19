@@ -2,7 +2,6 @@ import http, { type Server } from "http";
 import app from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
-import { verifyMailTransporter } from "./lib/mailTransporter.js";
 
 const PORT = Number(env.port);
 
@@ -54,12 +53,7 @@ const bootstrap = async () => {
   });
 
   try {
-    const dbStart = performance.now();
     await prisma.$connect();
-
-    console.log(
-      `Prisma connection: ${(performance.now() - dbStart).toFixed(2)}ms`
-    );
     console.log("Database connected successfully");
 
     const httpServer = http.createServer(app);
@@ -67,7 +61,6 @@ const bootstrap = async () => {
     server = httpServer.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on ${PORT} PORT`);
     });
-    await verifyMailTransporter();
   } catch (error) {
     console.error("Failed to start server:", error);
 
