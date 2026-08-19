@@ -54,15 +54,20 @@ const bootstrap = async () => {
   });
 
   try {
-    await prisma.$queryRaw`SELECT 1`;
+    const dbStart = performance.now();
+    await prisma.$connect();
+
+    console.log(
+      `Prisma connection: ${(performance.now() - dbStart).toFixed(2)}ms`
+    );
     console.log("Database connected successfully");
-    await verifyMailTransporter();
 
     const httpServer = http.createServer(app);
 
     server = httpServer.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on ${PORT} PORT`);
     });
+    await verifyMailTransporter();
   } catch (error) {
     console.error("Failed to start server:", error);
 
