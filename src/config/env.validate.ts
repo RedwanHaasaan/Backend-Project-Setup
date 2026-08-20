@@ -6,6 +6,9 @@ const envSchema = zod.object({
   DATABASE_URL: zod.string(),
   RESEND_API_KEY: zod.string(),
   SMTP_FROM: zod.string(),
+  CLOUDINARY_CLOUD_NAME: zod.string(),
+  CLOUDINARY_API_KEY: zod.string(),
+  CLOUDINARY_API_SECRET: zod.string()
 });
 
 export const envValidate = () => {

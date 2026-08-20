@@ -14,4 +14,7 @@ export const env = {
   dbUrl: envVariables.DATABASE_URL,
   resendApiKey: envVariables.RESEND_API_KEY,
   smtpFrom: envVariables.SMTP_FROM,
+  cloudName: envVariables.CLOUDINARY_CLOUD_NAME,
+  cloudApiKey: envVariables.CLOUDINARY_API_KEY,
+  cloudApiSecret: envVariables.CLOUDINARY_API_SECRET
 };
