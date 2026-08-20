@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
 
+    image: redwanhasaan/backend-setup
+
     container_name: backend-setup
 
     ports:
@@ -12,4 +14,42 @@ services:
     env_file:
       - .env
 
+    environment:
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
+
+    depends_on:
+      clamav:
+        condition: service_healthy
+
     restart: unless-stopped
+
+    networks:
+      - backend-network
+
+  clamav:
+    image: clamav/clamav:stable
+
+    container_name: shopnercoat-clamav
+
+    restart: unless-stopped
+
+    volumes:
+      - clamav-data:/var/lib/clamav
+
+    healthcheck:
+      test: [ "CMD-SHELL", "clamdscan --ping 2 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  clamav-data:

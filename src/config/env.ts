@@ -16,5 +16,7 @@ export const env = {
   smtpFrom: envVariables.SMTP_FROM,
   cloudName: envVariables.CLOUDINARY_CLOUD_NAME,
   cloudApiKey: envVariables.CLOUDINARY_API_KEY,
-  cloudApiSecret: envVariables.CLOUDINARY_API_SECRET
+  cloudApiSecret: envVariables.CLOUDINARY_API_SECRET,
+  clamAvHost: envVariables.CLAMAV_HOST,
+  clamAvPort: envVariables.CLAMAV_PORT
 };
