@@ -1,13 +1,17 @@
 import { Router } from "express";
 import authRouter from "../modules/auth/auth.route.js";
-
-const router:Router = Router();
+import imageRouter from "../modules/image/image.route.js"
+const router: Router = Router();
 
 const moduleRoutes = [
   {
     path: "/users",
     route: authRouter,
   },
+  {
+    path: "/images",
+    route: imageRouter,
+  }
 ];
 
 moduleRoutes.forEach((route) => {
