@@ -3,7 +3,7 @@ import multer from "multer";
 
 import { uploadUserImageController } from "./image.controller.js";
 
-const router = Router();
+const router: Router = Router();
 
 const upload = multer({ storage: multer.memoryStorage(), });
 
